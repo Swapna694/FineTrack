@@ -66,3 +66,16 @@ def edit_transaction(request, id):
         'form': form,
         'transaction': transaction
     })
+
+
+def delete_transaction(request, id):
+
+    transaction = get_object_or_404(Transaction, id=id)
+
+    if request.method == 'POST':
+        transaction.delete()
+        return redirect('home')
+
+    return render(request, 'transactions/delete_transaction.html', {
+        'transaction': transaction
+    })

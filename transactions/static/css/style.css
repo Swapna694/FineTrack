@@ -100,6 +100,7 @@ a{
     justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    
 }
 
 button {
@@ -131,6 +132,7 @@ th, td {
 
 th {
     background-color: #f8fafc;
+    
 }
 
 .positive {
@@ -205,3 +207,19 @@ th {
     display: inline-block;
     margin-top: 20px;
 }
+
+td a {
+    text-decoration: none;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+td a:first-child {
+    color: #2563eb;
+}
+
+td a:last-child {
+    color: #dc2626;
+}
+
+

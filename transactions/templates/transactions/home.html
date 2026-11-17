@@ -11,7 +11,7 @@
 <body>
 
     <nav class="navbar">
-        <h2>Expense Tracker</h2>
+        <h2>FineTrack</h2>
         <div>
             <a href="/">Dashboard</a>
             <a href="#">Transactions</a>
@@ -87,11 +87,17 @@
 
                     <td>{{ transaction.date }}</td>
 
-                    <td>
-                        <a href="{% url 'edit_transaction' transaction.id %}">
-                            Edit
-                        </a>
-                    </td>
+                    
+                        <td>
+                            <a href="{% url 'edit_transaction' transaction.id %}">
+                                Edit
+                            </a>
+
+                            <a href="{% url 'delete_transaction' transaction.id %}">
+                                Delete
+                            </a>
+                        </td>
+                    
 
                 </tr>
 
