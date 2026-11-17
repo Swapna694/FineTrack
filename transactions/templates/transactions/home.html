@@ -30,17 +30,17 @@
 
             <div class="card income">
                 <h3>Total Income</h3>
-                <h2>₹35,000</h2>
+                <h2>₹{{ total_income|floatformat:2 }}</h2>
             </div>
 
             <div class="card expense">
                 <h3>Total Expenses</h3>
-                <h2>₹10,000</h2>
+                <h2>₹{{ total_expenses|floatformat:2 }}</h2>
             </div>
 
             <div class="card balance">
                 <h3>Remaining Balance</h3>
-                <h2>₹25,000</h2>
+                <h2>₹{{ balance|floatformat:2 }}</h2>
             </div>
 
         </section>
@@ -49,53 +49,61 @@
 
             <div class="section-header">
                 <h2>Recent Transactions</h2>
-                <button>Add Transaction</button>
-            </div>
+                <button><a href="{% url 'add_transaction' %}" class="add-btn">Add Transaction</a> </button>          
+             </div>
 
             <table>
-                <thead>
-                    <tr>
-                        <th>Description</th>
-                        <th>Category</th>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Amount</th>
-                    </tr>
-                </thead>
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Type</th>
+                    <th>Amount</th>
+                    <th>Date</th>
+                    <th>Action</th>
+                   
+                </tr>
+            </thead>
 
-                <tbody>
-                    <tr>
-                        <td>Monthly Salary</td>
-                        <td>Salary</td>
-                        <td>17 Nov 2026</td>
-                        <td class="positive">Income</td>
-                        <td>₹30,000</td>
-                    </tr>
+            <tbody>
 
-                    <tr>
-                        <td>Food Shopping</td>
-                        <td>Food</td>
-                        <td>16 Nov 2026</td>
-                        <td class="negative">Expense</td>
-                        <td>₹2,000</td>
-                    </tr>
+                {% for transaction in transactions %}
 
-                    <tr>
-                        <td>Bus Travel</td>
-                        <td>Transport</td>
-                        <td>15 Nov 2026</td>
-                        <td class="negative">Expense</td>
-                        <td>₹1,000</td>
-                    </tr>
+                <tr>
+                    <td>{{ transaction.title }}</td>
 
-                    <tr>
-                        <td>Freelance Work</td>
-                        <td>Other Income</td>
-                        <td>14 Nov 2026</td>
-                        <td class="positive">Income</td>
-                        <td>₹5,000</td>
-                    </tr>
-                </tbody>
+                    <td>{{ transaction.transaction_type }}</td>
+
+                    <td>
+                        {% if transaction.transaction_type == 'Income' %}
+                            <span class="income">
+                                + ₹{{ transaction.amount }}
+                            </span>
+                        {% else %}
+                            <span class="expense">
+                                - ₹{{ transaction.amount }}
+                            </span>
+                        {% endif %}
+                    </td>
+
+                    <td>{{ transaction.date }}</td>
+
+                    <td>
+                        <a href="{% url 'edit_transaction' transaction.id %}">
+                            Edit
+                        </a>
+                    </td>
+
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="5">No transactions found.</td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
             </table>
 
         </section>
