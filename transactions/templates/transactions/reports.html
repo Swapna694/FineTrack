@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FineTrack | Reports</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <!-- Chart.js library -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">F</div>
+            <h2>FineTrack</h2>
+        </div>
+
+        <p class="menu-heading">MENU</p>
+
+        <nav class="sidebar-nav">
+
+            <a href="{% url 'home' %}" class="nav-item">
+                <span>▦</span> Dashboard
+            </a>
+
+            <a href="{% url 'transactions_list' %}" class="nav-item">
+                <span>↔</span> Transactions
+            </a>
+
+            <a href="{% url 'reports' %}" class="nav-item active">
+                <span>▤</span> Reports
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>⚙</span> Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Manage your money</p>
+            <h3>Track smarter.<br>Live better.</h3>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <header class="top-header">
+
+            <div>
+                <h1>Financial Reports</h1>
+                <p>Understand your income and spending patterns.</p>
+            </div>
+
+            <div class="profile">
+                <div class="profile-avatar">U</div>
+                <div>
+                    <h4>My Account</h4>
+                    <p>Personal Finance</p>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- SUMMARY CARDS -->
+        <section class="summary">
+
+            <div class="card income-card">
+                <div class="card-top">
+                    <span>Total Income</span>
+                    <div class="card-icon">↗</div>
+                </div>
+
+                <h2>₹{{ total_income|floatformat:2 }}</h2>
+                <p>Your total earnings</p>
+            </div>
+
+
+            <div class="card expense-card">
+                <div class="card-top">
+                    <span>Total Expenses</span>
+                    <div class="card-icon">↘</div>
+                </div>
+
+                <h2>₹{{ total_expenses|floatformat:2 }}</h2>
+                <p>Your total spending</p>
+            </div>
+
+
+            <div class="card balance-card">
+                <div class="card-top">
+                    <span>Remaining Balance</span>
+                    <div class="card-icon">₹</div>
+                </div>
+
+                <h2>₹{{ balance|floatformat:2 }}</h2>
+                <p>Your available balance</p>
+            </div>
+
+        </section>
+
+
+        <!-- CHARTS -->
+        <section class="reports-grid">
+
+            <!-- INCOME VS EXPENSE CHART -->
+            <div class="chart-card">
+
+                <div class="chart-heading">
+                    <h2>Income vs Expenses</h2>
+                    <p>Compare your total earnings and spending.</p>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="incomeExpenseChart"></canvas>
+                </div>
+
+            </div>
+
+
+            <!-- CATEGORY EXPENSE CHART -->
+            <div class="chart-card">
+
+                <div class="chart-heading">
+                    <h2>Expense by Category</h2>
+                    <p>Understand where your money goes.</p>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="categoryChart"></canvas>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <footer class="footer">
+            FineTrack © 2026 — Manage your finances smarter.
+        </footer>
+
+    </main>
+
+</div>
+
+
+<!-- CATEGORY DATA FROM DJANGO -->
+{{ category_expenses|json_script:"category-data" }}
+
+
+<!-- CHART JAVASCRIPT -->
+<script>
+
+    // Income and expense values from Django
+    const income = Number("{{ total_income|default:0 }}");
+    const expenses = Number("{{ total_expenses|default:0 }}");
+
+
+    // Chart 1: Income vs Expenses
+    new Chart(document.getElementById('incomeExpenseChart'), {
+
+        type: 'bar',
+
+        data: {
+            labels: ['Income', 'Expenses'],
+
+            datasets: [{
+                label: 'Amount (₹)',
+                data: [income, expenses],
+                backgroundColor: ['#16a34a', '#dc2626'],
+                borderRadius: 8,
+                barThickness: 65
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    display: false
+                }
+            },
+
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+
+    });
+
+
+    // Get category data from Django
+    const categoryData = JSON.parse(
+        document.getElementById('category-data').textContent
+    );
+
+    const categoryLabels = categoryData.map(
+        item => item.category
+    );
+
+    const categoryAmounts = categoryData.map(
+        item => Number(item.total)
+    );
+
+
+    // Chart 2: Category-wise Expenses
+    new Chart(document.getElementById('categoryChart'), {
+
+        type: 'doughnut',
+
+        data: {
+            labels: categoryLabels,
+
+            datasets: [{
+                data: categoryAmounts,
+
+                backgroundColor: [
+                    '#16a34a',
+                    '#2563eb',
+                    '#f59e0b',
+                    '#dc2626',
+                    '#8b5cf6',
+                    '#0891b2',
+                    '#ec4899'
+                ],
+
+                borderWidth: 2,
+                borderColor: '#ffffff'
+            }]
+        },
+
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+
+    });
+
+</script>
+
+</body>
+</html>

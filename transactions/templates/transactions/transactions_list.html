@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FineTrack | Transactions</title>
+
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <div class="brand-icon">F</div>
+            <h2>FineTrack</h2>
+        </div>
+
+        <p class="menu-heading">MENU</p>
+
+        <nav class="sidebar-nav">
+
+            <a href="{% url 'home' %}" class="nav-item">
+                <span>▦</span> Dashboard
+            </a>
+
+            <a href="{% url 'transactions_list' %}" class="nav-item active">
+                <span>↔</span> Transactions
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>▤</span> Reports
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>⚙</span> Settings
+            </a>
+
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Manage your money</p>
+            <h3>Track smarter.<br>Live better.</h3>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- HEADER -->
+        <header class="top-header">
+
+            <div>
+                <h1>Transactions</h1>
+                <p>View and manage all your financial transactions.</p>
+            </div>
+
+            <div class="profile">
+                <div class="profile-avatar">U</div>
+                <div>
+                    <h4>My Account</h4>
+                    <p>Personal Finance</p>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- TRANSACTIONS TABLE -->
+        <section class="transactions">
+
+            <div class="section-header">
+
+                <div>
+                    <h2>All Transactions</h2>
+                    <p>Your complete income and expense history.</p>
+                </div>
+
+                <a href="{% url 'add_transaction' %}" class="add-btn">
+                    + Add Transaction
+                </a>
+
+            </div>
+
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>TRANSACTION</th>
+                            <th>CATEGORY</th>
+                            <th>TYPE</th>
+                            <th>AMOUNT</th>
+                            <th>DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for transaction in transactions %}
+
+                        <tr>
+
+                            <td>
+                                <strong>{{ transaction.title }}</strong>
+                            </td>
+
+                            <td>{{ transaction.category }}</td>
+
+                            <td>
+                                {% if transaction.transaction_type == 'Income' %}
+                                    <span class="type-badge type-income">
+                                        Income
+                                    </span>
+                                {% else %}
+                                    <span class="type-badge type-expense">
+                                        Expense
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if transaction.transaction_type == 'Income' %}
+                                    <span class="amount-income">
+                                        + ₹{{ transaction.amount }}
+                                    </span>
+                                {% else %}
+                                    <span class="amount-expense">
+                                        - ₹{{ transaction.amount }}
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>{{ transaction.date|date:"d M Y" }}</td>
+
+                            <td class="action-buttons">
+
+                                <a href="{% url 'edit_transaction' transaction.id %}"
+                                   class="edit-btn">Edit</a>
+
+                                <a href="{% url 'delete_transaction' transaction.id %}"
+                                   class="delete-btn">Delete</a>
+
+                            </td>
+
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                No transactions available.
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+        <footer class="footer">
+            FineTrack © 2026 — Manage your finances smarter.
+        </footer>
+
+    </main>
+
+</div>
+
+</body>
+</html>

@@ -4,117 +4,204 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Expense Tracker</title>
+    <title>FineTrack | Dashboard</title>
+
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
+
 <body>
 
-    <nav class="navbar">
-        <h2>FineTrack</h2>
-        <div>
-            <a href="/">Dashboard</a>
-            <a href="#">Transactions</a>
-            <a href="#">About</a>
-        </div>
-    </nav>
+<div class="dashboard">
 
-    <main class="container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
 
-        <div class="welcome">
-            <h1>Dashboard</h1>
-            <p>Welcome back! Here's your financial overview.</p>
+        <div class="brand">
+            <div class="brand-icon">F</div>
+            <h2>FineTrack</h2>
         </div>
 
+        <p class="menu-heading">MENU</p>
+
+        <nav class="sidebar-nav">
+            <a href="{% url 'home' %}" class="nav-item active">
+                <span>▦</span> Dashboard
+            </a>
+
+            <a href="{% url 'transactions_list' %}" class="nav-item">
+                <span>↔</span> Transactions
+            </a>
+
+            <a href="{% url 'reports' %}" class="nav-item">
+                <span>▤</span> Reports
+            </a>
+
+            <a href="#" class="nav-item">
+                <span>⚙</span> Settings
+            </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <p>Manage your money</p>
+            <h3>Track smarter.<br>Live better.</h3>
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN CONTENT -->
+    <main class="main-content">
+
+        <!-- TOP HEADER -->
+        <header class="top-header">
+
+            <div>
+                <h1>Dashboard</h1>
+                <p>Welcome back! Here's your financial overview.</p>
+            </div>
+
+            <div class="profile">
+                <div class="profile-avatar">U</div>
+                <div>
+                    <h4>My Account</h4>
+                    <p>Personal Finance</p>
+                </div>
+            </div>
+
+        </header>
+
+
+        <!-- SUMMARY CARDS -->
         <section class="summary">
 
-            <div class="card income">
-                <h3>Total Income</h3>
+            <div class="card income-card">
+                <div class="card-top">
+                    <span>Total Income</span>
+                    <div class="card-icon">↗</div>
+                </div>
                 <h2>₹{{ total_income|floatformat:2 }}</h2>
+                <p>Your total earnings</p>
             </div>
 
-            <div class="card expense">
-                <h3>Total Expenses</h3>
+            <div class="card expense-card">
+                <div class="card-top">
+                    <span>Total Expenses</span>
+                    <div class="card-icon">↘</div>
+                </div>
                 <h2>₹{{ total_expenses|floatformat:2 }}</h2>
+                <p>Your total spending</p>
             </div>
 
-            <div class="card balance">
-                <h3>Remaining Balance</h3>
+            <div class="card balance-card">
+                <div class="card-top">
+                    <span>Remaining Balance</span>
+                    <div class="card-icon">₹</div>
+                </div>
                 <h2>₹{{ balance|floatformat:2 }}</h2>
+                <p>Your available balance</p>
             </div>
 
         </section>
 
+
+        <!-- TRANSACTION SECTION -->
         <section class="transactions">
 
             <div class="section-header">
-                <h2>Recent Transactions</h2>
-                <button><a href="{% url 'add_transaction' %}" class="add-btn">Add Transaction</a> </button>          
-             </div>
 
-            <table>
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Type</th>
-                    <th>Amount</th>
-                    <th>Date</th>
-                    <th>Action</th>
-                   
-                </tr>
-            </thead>
+                <div>
+                    <h2>Recent Transactions</h2>
+                    <p>Keep track of your income and expenses.</p>
+                </div>
 
-            <tbody>
+                <a href="{% url 'add_transaction' %}" class="add-btn">
+                    + Add Transaction
+                </a>
 
-                {% for transaction in transactions %}
+            </div>
 
-                <tr>
-                    <td>{{ transaction.title }}</td>
 
-                    <td>{{ transaction.transaction_type }}</td>
+            <div class="table-container">
 
-                    <td>
-                        {% if transaction.transaction_type == 'Income' %}
-                            <span class="income">
-                                + ₹{{ transaction.amount }}
-                            </span>
-                        {% else %}
-                            <span class="expense">
-                                - ₹{{ transaction.amount }}
-                            </span>
-                        {% endif %}
-                    </td>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>TRANSACTION</th>
+                            <th>CATEGORY</th>
+                            <th>TYPE</th>
+                            <th>AMOUNT</th>
+                            <th>DATE</th>
+                            <th>ACTIONS</th>
+                        </tr>
+                    </thead>
 
-                    <td>{{ transaction.date }}</td>
+                    <tbody>
 
-                    
-                        <td>
-                            <a href="{% url 'edit_transaction' transaction.id %}">
-                                Edit
-                            </a>
+                        {% for transaction in transactions %}
 
-                            <a href="{% url 'delete_transaction' transaction.id %}">
-                                Delete
-                            </a>
-                        </td>
-                    
+                        <tr>
+                            <td>
+                                <strong>{{ transaction.title }}</strong>
+                            </td>
 
-                </tr>
+                            <td>{{ transaction.category }}</td>
 
-                {% empty %}
+                            <td>
+                                {% if transaction.transaction_type == 'Income' %}
+                                    <span class="type-badge type-income">Income</span>
+                                {% else %}
+                                    <span class="type-badge type-expense">Expense</span>
+                                {% endif %}
+                            </td>
 
-                <tr>
-                    <td colspan="5">No transactions found.</td>
-                </tr>
+                            <td>
+                                {% if transaction.transaction_type == 'Income' %}
+                                    <span class="amount-income">
+                                        + ₹{{ transaction.amount }}
+                                    </span>
+                                {% else %}
+                                    <span class="amount-expense">
+                                        - ₹{{ transaction.amount }}
+                                    </span>
+                                {% endif %}
+                            </td>
 
-                {% endfor %}
+                            <td>{{ transaction.date|date:"d M Y" }}</td>
 
-            </tbody>
-            </table>
+                            <td class="action-buttons">
+                                <a href="{% url 'edit_transaction' transaction.id %}"
+                                   class="edit-btn">Edit</a>
+
+                                <a href="{% url 'delete_transaction' transaction.id %}"
+                                   class="delete-btn">Delete</a>
+                            </td>
+                        </tr>
+
+                        {% empty %}
+
+                        <tr>
+                            <td colspan="6" class="empty-message">
+                                No transactions found. Add your first transaction!
+                            </td>
+                        </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+
+            </div>
 
         </section>
 
+        <footer class="footer">
+            FineTrack © 2026 — Manage your finances smarter.
+        </footer>
+
     </main>
+
+</div>
 
 </body>
 </html>
